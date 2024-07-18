@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      width: 100%;
+      margin: 0;
+    }
+    #raspadinha{
+      display: grid;
+      grid-template-columns: repeat(40,1fr);
+      /* background-image: url('./sorteio.jpg'); */
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      width: 400px;
+      height: 100px;
+      gap: 0;
+      border: 2px solid #000;
+      border-radius: 10px;
+    }
+    .bloco{
+      width: 10px;
+      height: 10px;
+      cursor: pointer;
+      background-color: #bbb;
+    }
+    .hidden{
+      background-color: transparent !important;
+      
+    }
+  </style>
+</head>
+<body>
+  <div id="raspadinha">
+
+  </div>
+  
+  <script defer>
+    let premiado = "sorteio.jpg"
+    let perdeu = "perdeu.jpg"
+    let rasp = document.querySelector("#raspadinha")
+    let msgAlert
+    
+    function rasparTudo(){
+      let alerta = document.querySelector("#alerta")
+      let bloco = [...document.querySelectorAll(".bloco")]
+      let preenchido = document.querySelectorAll(".hidden")
+
+      if(preenchido.length > 250 && alerta == null){
+        bloco.map(el => el.remove())
+        vAlerta()
+      }
+      
+    }
+    function vAlerta(){
+      let backgroundAlert = document.createElement("div")
+      let alerta = document.createElement("div")
+      alerta.id = "alerta"
+      backgroundAlert.style = "z-index:10;position:absolute;display:flex;justify-content:center;height:100%;width:100%;"
+      alerta.style = "width:300px;border:2px solid #000;border-radius:5px;height:200px"
+      alerta.innerHTML = `
+      <div style="text-align:center;font-size:large;background-color:yellow;padding:1rem 0">
+        Sucesso!!!
+      </div>
+      <div style="text-align:center;font-weight: 600;height:100px;padding:15px;background-color:#fff;">
+        ${msgAlert}
+      </div>
+      `
+      backgroundAlert.appendChild(alerta)
+      document.body.appendChild(backgroundAlert)
+
+      backgroundAlert.addEventListener("click",()=>{
+        backgroundAlert.remove()
+        vCriarRaspadinha()
+      })
+    }
+    function vCriarRaspadinha(){
+      for(let i = 0;i < 400;i++){
+        let div = document.createElement("div")
+        div.classList.add("bloco")
+        rasp.appendChild(div)
+      }
+      vSortear()
+      rasp.addEventListener('touchmove', function(event) {
+        // Pega a posição do toque
+        var touch = event.touches[0];
+        var touchX = touch.clientX;
+        var touchY = touch.clientY;
+
+        // Identifica o elemento na posição do toque
+        var element = document.elementFromPoint(touchX, touchY);
+
+        if (element && element.classList.contains("bloco")) {
+          element.classList.add("hidden")
+          rasparTudo()
+        }
+      });
+    }
+    function vSortear(){
+      let random = Math.floor(Math.random() *10)
+      if((random % 2) == 1){
+        rasp.style= `background-image:url('./${premiado}')`
+        msgAlert = "Parabéns você ganhou!!!   "
+      }else{
+        rasp.style= `background-image:url('./${perdeu}')`
+        msgAlert = "Você perdeu!!!   "
+      }
+    }
+    vCriarRaspadinha()
+  </script>
+</body>
+</html>
